@@ -4,7 +4,7 @@ use v6;
 
 =head1 NAME
 
-A building block for concurrent programming based loosely on Go's `context`.
+Context: A building block for concurrent programming based on Go's `context`.
 
 =head1 DESCRIPTION
 

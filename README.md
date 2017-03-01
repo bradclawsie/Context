@@ -1,6 +1,10 @@
 [![License BSD](https://img.shields.io/badge/License-BSD-blue.svg)](http://opensource.org/licenses/BSD-3-Clause)
 [![Build Status](https://travis-ci.org/bradclawsie/Context.png)](https://travis-ci.org/bradclawsie/Context)
 
+## Context
+
+### A building block for concurrent programming based on Go's `context`
+
 Go's `context` (https://golang.org/pkg/context/) solves two important problems
 for concurrent programming. First, it provides a mechanism for sharing a safe
 cancellation mechanism. Second, it provides a safe abstraction for sharing
