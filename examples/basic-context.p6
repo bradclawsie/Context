@@ -5,6 +5,11 @@ use Context;
 # The example illustrates how to spawn a concurrent routines
 # and then both communicate with it and cancel it. 
 
+# Note how the pattern implied by using Context results
+# in some extra code required in a spawned routine in
+# order to capture control messages from the Context
+# instance.
+
 # Here is a contrived "client" that our main program will
 # spawn, communicate with, and possibly cancel.
 sub sample-client(Context:D $ctx) {
@@ -21,24 +26,31 @@ sub sample-client(Context:D $ctx) {
     # message.
     my $p = start {
         react {
-            whenever $supply -> $v {
-                if $v eq $CANCEL {
+            whenever $supply -> $v { # Context cancel supply.
+                if $v eq $CONTEXT_CANCEL {
                     say "context supply:$v";
                     done;                    
                 }
             }
-            whenever $our-supply -> $v {
+            whenever $our-supply -> $v { # Local completion supply.
                 say "our supply:$v";
                 done;
             }
         }
     }
+
+    # This is where the actual work of a spawned routine would be.
     start {
+
+        # Some work to be done may require looking up
+        # a value in the shared Context hash. This is
+        # safe for both sides (caller and callee) to do.
         my $a-val;
         try {
             $a-val = $ctx.get('a');
             CATCH {
                 when X::Context::KeyNotFound {
+                    # We've deciced to exit if we can't find our value.
                     $our-supplier.emit('key not found');
                 }
             }

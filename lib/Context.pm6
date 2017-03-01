@@ -55,7 +55,7 @@ class X::Context::KeyNotFound is Exception is export {
 
 # The supply for Context may send other consumables. This is the one you should exchange
 # when you want to cancel a context.
-constant $CANCEL is export = 'context-cancel';
+constant $CONTEXT_CANCEL is export = 'context-cancel';
 
 class Context:auth<bradclawsie>:ver<0.0.1> is export {
     has Hash[Mu,Any] $!kv;
@@ -98,10 +98,9 @@ class Context:auth<bradclawsie>:ver<0.0.1> is export {
     # `canceler` returns a sub you can call to force the context to canel.
     method canceler(--> Sub) {
         return sub {
-            $!supplier.emit($CANCEL);
+            $!supplier.emit($CONTEXT_CANCEL);
         }
     }
 
     # Potential future support could include timed cancelers...
 }
-
