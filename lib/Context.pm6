@@ -30,18 +30,27 @@ library code will be used in, but the Context package only makes sense as a
 building block for concurrent development, so it is enabled for safe use
 in concurrent environments by default.
 
+Like the Go equivalent, this library doesn't reduce keystrokes. Indeed, it
+increases keystrokes as it implies adopting a new pattern for concurrent
+development. 
+
+=head1 SYNOPSIS
+
+See `examples`.
+
+=head1 AUTHOR
+
+Brad Clawsie (PAUSE:bradclawsie, email:brad@b7j0c.org)
+
+=head1 LICENSE
+
+This module is licensed under the BSD license, see: https://b7j0c.org/stuff/license.txt
+
 =end pod
 
 class X::Context::KeyNotFound is Exception is export {
     has Mu $.key;
     method message() { 'not found: ' ~ $.key.gist; }
-}
-
-class X::Context::BadCopier is Exception is export {
-    has Signature $.signature;
-    method message() {
-        'bad copy signature: ' ~ $.signature.gist ~ ' (expected: ' ~ :(Any --> Any).gist ~ ')';
-    }
 }
 
 # The supply for Context may send other consumables. This is the one you should exchange
@@ -59,26 +68,12 @@ class Context:auth<bradclawsie>:ver<0.0.1> is export {
         $!supplier = Supplier.new();
     }
     
-    # Sanity check a value-copying function.
-    my sub copy-val(Sub $make-copy, Any $val --> Any) {
-        my Any $copy;
-        if $make-copy.defined.so {
-            if $make-copy.signature.params.elems != 1 ||
-            $make-copy.signature.returns.elems != 1 {
-                X::Context::BadCopier.new(signature=>$make-copy.signature).throw;
-            }
-            return $make-copy($val);
-        } else {
-            return $val.clone;
-        }
-    }
-    
     # `set` a key/value in the shared hash. The value will be cloned unless
     # an optional make-copy function of Any --> Any is provided, in which
     # case it will be called.
     method set(Mu:D $key, Any $val, Sub $make-copy?) {
         my $block = {
-            my Any $copy = copy-val($make-copy,$val);
+            my Any $copy = $make-copy.defined ?? $make-copy($val) !! $val.clone;
             $!kv.append(:{($key) => $copy});
         }
         $!lock.protect($block);
@@ -91,7 +86,8 @@ class Context:auth<bradclawsie>:ver<0.0.1> is export {
     method get(Mu:D $key, Sub $make-copy? --> Any) {
         my $block = {
             if $!kv{$key}:exists {
-                return copy-val($make-copy,$!kv{$key});     
+                my Any $val = $!kv{$key};
+                return $make-copy.defined ?? $make-copy($val) !! $val.clone;
             } else {
                 X::Context::KeyNotFound.new(key=>$key).throw;
             }
@@ -105,5 +101,7 @@ class Context:auth<bradclawsie>:ver<0.0.1> is export {
             $!supplier.emit($CANCEL);
         }
     }
+
+    # Potential future support could include timed cancelers...
 }
 
