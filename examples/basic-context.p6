@@ -10,6 +10,10 @@ use Context;
 # order to capture control messages from the Context
 # instance.
 
+# Also note that Contexts are intended to be instantiated
+# per-request and it is recommended to only store transient
+# request-scoped values; don't use it to store DB handles etc.
+
 # Here is a contrived "client" that our main program will
 # spawn, communicate with, and possibly cancel.
 sub sample-client(Context:D $ctx) {
