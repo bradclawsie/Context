@@ -60,6 +60,7 @@ sub sample-client(Context:D $ctx) {
             }
             say "a val:" ~ $a-val;
         }
+
         # Let's assume our "work" takes two more seconds.
         # The caller will want to cancel at 1 second. You
         # can play with these values to change that.
