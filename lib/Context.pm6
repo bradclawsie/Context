@@ -28,7 +28,9 @@ values safely to spawned workers.
 It is often good practice to not make assumptions about the concurrent environment
 library code will be used in, but the Context package only makes sense as a
 building block for concurrent development, so it is enabled for safe use
-in concurrent environments by default.
+in concurrent environments by default. Context is not recommended as a way
+of passing persistent references like DB connection handles etc, instead
+it is recommended that Context only be used for request-scope values.
 
 Like the Go equivalent, this library doesn't reduce keystrokes. Indeed, it
 increases keystrokes as it implies adopting a new pattern for concurrent
