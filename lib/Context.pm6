@@ -59,7 +59,7 @@ class X::Context::KeyNotFound is Exception is export {
 # when you want to cancel a context.
 constant $CONTEXT_CANCEL is export = 'context-cancel';
 
-class Context:auth<bradclawsie>:ver<0.0.1> is export {
+class Context:auth<bradclawsie>:ver<0.0.2> is export {
     has Hash[Mu,Any] $!kv;
     has Lock $!lock;
     has Supplier $.supplier;
