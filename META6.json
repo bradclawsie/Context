@@ -6,10 +6,10 @@
     "description" : "A building block for concurrent programming inspired by Go's context package",
     "author" : "Brad Clawsie",
     "provides" : {
-        "DB::RSCS" : "lib/Context.pm6"
+        "Context" : "lib/Context.pm6"
     },
     "depends" : [],
     "test-depends" : [],
     "build-depends" : [],
-    "source-url" : "git://github.com/bradclawsie/Context.git"
+    "source-url" : "https://github.com/bradclawsie/Context.git"
 }
